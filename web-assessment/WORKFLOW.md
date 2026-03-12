@@ -6,7 +6,7 @@
 
 **WRITTEN AUTHORIZATION REQUIRED.** Use this workflow and the associated automation **only** on assets that you **own** or for which you have **explicit written authorization** to assess. Unauthorized access to computer systems is illegal. The authors assume no liability for misuse.
 
-**Scope:** Reconnaissance, asset inventory, DNS review, exposed-service discovery, HTTP/TLS/security-header analysis, passive and light-touch URL collection, historical URL intelligence, JS/API surface analysis, screenshotting, technology fingerprinting, and safe template-based misconfiguration checks. **No exploitation, payload delivery, persistence, phishing, malware, privilege escalation, or denial-of-service.** No credential attacks, brute force, or destructive testing.
+**Scope:** Reconnaissance, asset inventory, DNS review, exposed-service discovery, HTTP/TLS/security-header analysis, passive and light-touch URL collection, historical URL intelligence, JS/API surface analysis, screenshotting, technology fingerprinting, and safe template-based misconfiguration checks. **No exploitation, payload delivery to targets, persistence, phishing, malware, privilege escalation, or denial-of-service.** No credential attacks, brute force, or destructive testing.
 
 ---
 
@@ -32,11 +32,27 @@
 - Specific safe checks: robots.txt, sitemap.xml, .well-known/, security.txt, crossdomain.xml, clientaccesspolicy.xml, swagger/openapi/api-docs, graphql/graphiql, login/signin, admin/dashboard, debug/actuator/health/metrics/version, backup extensions in passive data only (.bak, .old, .zip, .tar, .gz, .sql, .env, .log, .conf).
 - TLS/certificate review; security header and cookie review; **safe nuclei only** (exposures, misconfig, default-logins identification, takeovers passive); service exposure review; findings correlation and normalization.
 - Reporting: executive summary, technical findings, host inventory CSV/TSV, prioritized remediation checklist.
+- (Optional) **Exploitation preparation artifacts only**: create notes/checklists and run exploit *research* helpers (e.g. `searchsploit --nmap`) against collected scan outputs. This does **not** exploit targets.
 
 ### What the automation does NOT do
 
-- No exploitation, payloads, persistence, phishing, malware, privilege escalation, DoS, credential attacks, brute force, or destructive testing.
+- No exploitation, payload delivery to targets, persistence, phishing, malware, privilege escalation, DoS, credential attacks, brute force, or destructive testing.
 - No aggressive path spraying, parameter fuzzing, recursive aggressive crawling, or high-risk nuclei/authenticated templates.
+- Note: Some scripts can optionally **generate payload files locally** for authorized testing workflows. They are **not executed** or delivered automatically; treat them as training/ops artifacts and keep them out of shared repos.
+
+---
+
+## Notes for `webapp_pentest.sh` (this repo)
+
+`webapp_pentest.sh` is a practical recon + scanning script with a single timestamped output folder (e.g. `pentest-output-YYYYMMDD_HHMMSS/`).
+
+- **Output hardening**
+  - Subdomain/host list is sanitized to avoid ANSI/graph-output corruption.
+  - Unresolvable hostnames are skipped to reduce empty result files.
+  - Tool calls use timeouts where possible to prevent hangs.
+- **Optional exploitation prep**
+  - `--exploitation-prep` writes `exploitation/` artifacts (notes + searchsploit outputs).
+  - `--generate-payloads` additionally generates example payload files locally (requires `msfvenom`).
 
 ---
 
